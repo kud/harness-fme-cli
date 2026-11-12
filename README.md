@@ -1,23 +1,28 @@
-# @kud/harness-fme-cli
+<div align="center">
 
-> Harness FME (formerly Split) feature flags from the terminal: look at rollouts, change targeting safely.
+🚩
 
-[![npm](https://img.shields.io/npm/v/@kud/harness-fme-cli)](https://www.npmjs.com/package/@kud/harness-fme-cli)
-[![licence](https://img.shields.io/npm/l/@kud/harness-fme-cli)](LICENSE)
-[![node](https://img.shields.io/node/v/@kud/harness-fme-cli)](package.json)
+# Harness FME CLI
 
-`harness-fme` is a terminal client for Harness FME feature flags, built on [`@kud/harness-fme`](https://www.npmjs.com/package/@kud/harness-fme). Reading is quick and quiet. Writing is deliberate: every change is a plan first, backed up before it lands, and checked after.
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=node.js&logoColor=white)
+![npm](https://img.shields.io/npm/v/%40kud%2Fharness-fme-cli?style=flat-square&color=CB3837)
+![MIT](https://img.shields.io/badge/licence-MIT-22C55E?style=flat-square)
+
+**Terminal client for Harness FME (Split) feature flags: list, status, targeting and rollout changes with plans, backups and read-back checks.**
+
+<a href="https://kud.io/projects/harness-fme-cli">Website</a> · <a href="https://kud.io/projects/harness-fme-cli/docs">Documentation</a>
+
+</div>
 
 ## Features
 
-- **See rollouts at a glance**: one table of flags against environments, with the rollout status and default rule for each.
-- **Find what is not live yet**: `unreleased` lists the flags that are not fully on in an environment.
-- **Change targeting from the shell**: add or remove an individual key on a treatment, serve `on` or `off`, ramp to a percentage, or act on a segment.
-- **Plan first**: every write prints a plan and writes nothing until you pass `--go`.
-- **Backed up and verified**: the original definition is saved before each write, and the flag is read back and compared with the plan afterwards. The run stops at the first failure.
-- **Production guard**: an environment whose name matches `/prod/i` refuses to write unless you spell out its exact name and pass `--go`.
-- **Polite to the API**: calls are spaced about 550 ms apart and 429 reset headers are honoured.
-- **Scriptable**: `--json` for machine-readable output, `--no-color` for plain text, and stable exit codes.
+- **Rollouts at a glance** — one table of flags against environments, with the rollout status and default rule for each; `unreleased` lists what is not fully on yet
+- **Interactive dashboard** — `harness-fme tui` is a full-screen view of flags and environments, read-only unless you start it with `--write`
+- **Change targeting from the shell** — add or remove an individual key on a treatment, serve `on` or `off`, ramp to a percentage, or act on a segment
+- **Plan, backup, read-back** — every write prints a plan first, saves the original definition before it lands, and checks the flag afterwards, stopping at the first failure
+- **Production guard** — an environment whose name matches `/prod/i` refuses to write unless its exact name is spelled out
+- **Scriptable** — `--json` for machine-readable output, `--no-color` for plain text, stable exit codes, and API calls spaced politely with 429 reset headers honoured
 
 ## Install
 
@@ -25,31 +30,34 @@
 npm install -g @kud/harness-fme-cli
 ```
 
-Requires Node 20 or later. The command is `harness-fme`; if you would rather type less:
+Binary: `harness-fme` · Requires Node.js >= 20
+
+There is deliberately no second binary. If you would rather type less, alias it:
 
 ```sh
 alias fme=harness-fme
 ```
 
-## Quick start
+## Usage
 
-```sh
-export HARNESS_FME_API_KEY=<your-api-key>
-export HARNESS_FME_WORKSPACE="Storefront"
+```console
+$ export HARNESS_FME_API_KEY=<your-api-key>
+$ export HARNESS_FME_WORKSPACE="Storefront"
 
-harness-fme list --env QA --env Prod
-harness-fme status checkout_new_flow
-harness-fme unreleased --env QA
+$ harness-fme list --env QA --env Prod
+$ harness-fme status checkout_new_flow
+$ harness-fme unreleased --env QA
 
-harness-fme on checkout_new_flow --env QA
-harness-fme on checkout_new_flow --env QA --go
+$ harness-fme on checkout_new_flow --env QA
+$ harness-fme on checkout_new_flow --env QA --go
+
+$ harness-fme tui --env QA --env Prod
+$ harness-fme tui --env QA --write
 ```
 
 The first `on` shows the plan and writes nothing. The second applies it.
 
-## Command reference
-
-Global options apply to every command.
+### Global options
 
 | Option                       | Description                                                          |
 | ---------------------------- | -------------------------------------------------------------------- |
@@ -88,6 +96,34 @@ Flags that are not fully on in the given environment. `--env` is required. Also 
 
 ```sh
 harness-fme unreleased --env QA --tag payments
+```
+
+### Dashboard
+
+#### `tui`
+
+A full-screen dashboard built on [`@kud/harness-fme-ink`](https://www.npmjs.com/package/@kud/harness-fme-ink). It needs an interactive terminal, and it is read-only unless started with `--write`. Takes `--tag`, `--prefix` and `-e, --env` to narrow what it loads.
+
+| Key                       | Action                                                    |
+| ------------------------- | --------------------------------------------------------- |
+| `up` / `down`             | Move through the flags                                    |
+| `left` / `right` or `tab` | Change the focused environment column                     |
+| `space`                   | Mark or unmark a flag                                     |
+| `enter`                   | Open a flag                                               |
+| `r`                       | Refresh                                                   |
+| `q`                       | Quit                                                      |
+| `o`                       | Write: serve `on` for everyone (needs `--write`)          |
+| `f`                       | Write: serve `off` (needs `--write`)                      |
+| `a`                       | Write: add the `HARNESS_FME_KEY` key (needs `--write`)    |
+| `x`                       | Write: remove the `HARNESS_FME_KEY` key (needs `--write`) |
+
+The write keys act on the marked flags, or on the selected flag when none are marked, in the focused environment. They go through the same path as the commands below: a plan, a confirmation, a backup before each write, and a read-back after it.
+
+The initial focus is never a production environment, and a production environment needs its exact name typed out before a write applies.
+
+```sh
+harness-fme tui --env QA --env Prod
+HARNESS_FME_KEY=0a1b2c3d-0000-4000-8000-000000000001 harness-fme tui --env QA --write
 ```
 
 ### Writing
@@ -158,7 +194,7 @@ Writes are the point of this tool, so they are the most careful part of it.
 3. **A read-back after each write.** The flag is read again and diffed against the plan. The run stops at the first failure, reports how many flags were changed and how many were not attempted, and exits with code 1.
 4. **A way to go slowly.** `--only <flag>` and `--limit <n>` narrow what is written from a larger plan, so you can try one flag before the rest.
 5. **Gentle on the API.** Calls are spaced about 550 ms apart, and when the API answers 429 the reset headers are honoured before retrying.
-6. **A production guard.** An environment whose name matches `/prod/i` refuses to write unless `--env <its exact name>` and `--go` are both given. `--env prod` for an environment called `Prod` is a refusal, not a guess.
+6. **A production guard.** An environment whose name matches `/prod/i` refuses to write unless `--env <its exact name>` and `--go` are both given. `--env prod` for an environment called `Prod` is a refusal, not a guess. In the TUI the same rule applies: the exact name is typed out.
 7. **Every write is labelled.** Each carries a title and comment, from sensible defaults or your own `--title` and `--comment`, so the change history says why.
 
 A typical careful rollout, trying one flag from a prefix before the rest:
@@ -177,28 +213,37 @@ The first command is a plan only. The second writes a single flag; because `Prod
 | ----------------------- | ------------------------------------------------------------------------------------------------- |
 | `HARNESS_FME_API_KEY`   | API key. `MCP_HARNESS_FME_API_KEY` is read too, so one exported key serves the MCP server as well |
 | `HARNESS_FME_WORKSPACE` | Default workspace, by name or id                                                                  |
-| `HARNESS_FME_KEY`       | Default for `--key`                                                                               |
+| `HARNESS_FME_KEY`       | Default for `--key`, and the key the TUI's `a` and `x` act on                                     |
 | `NO_COLOR`              | Disable colour                                                                                    |
 
 The API key is never printed, on success or on failure. Without one, the command exits with code 2 before making any request.
 
 ## Related packages
 
-- [`@kud/harness-fme`](https://www.npmjs.com/package/@kud/harness-fme): the core library this CLI is built on
-- [`@kud/mcp-harness-fme`](https://www.npmjs.com/package/@kud/mcp-harness-fme): an MCP server for the same API
+- [`@kud/harness-fme`](https://www.npmjs.com/package/@kud/harness-fme) — the core library this CLI is built on
+- [`@kud/harness-fme-ink`](https://www.npmjs.com/package/@kud/harness-fme-ink) — the Ink components behind the dashboard
+- [`@kud/mcp-harness-fme`](https://www.npmjs.com/package/@kud/mcp-harness-fme) — an MCP server for the same API
+
+<!-- landing:skip -->
 
 ## Development
 
 ```sh
+git clone https://github.com/kud/harness-fme-cli.git
+cd harness-fme-cli
 npm install
 npm run dev -- list --env QA
-npm run typecheck
-npm test
-npm run build
 ```
+
+| Script              | Purpose                        |
+| ------------------- | ------------------------------ |
+| `npm run build`     | Bundle to `dist/` with tsup    |
+| `npm run dev`       | Run directly via tsx           |
+| `npm run typecheck` | Type-check without emitting    |
+| `npm test`          | Run the test suite with Vitest |
 
 Tests drive the CLI against a fake API, so nothing touches a real workspace.
 
-## Licence
+<!-- landing:/skip -->
 
-MIT
+📚 **Full documentation → [harness-fme-cli/docs](https://kud.io/projects/harness-fme-cli/docs)**
