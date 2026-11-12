@@ -1,0 +1,54 @@
+{
+  "name": "@kud/harness-fme-cli",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Terminal client for Harness FME (Split) feature flags: list, status, targeting and rollout changes with plans, backups and read-back checks.",
+  "bin": {
+    "harness-fme": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "build:watch": "tsup --watch",
+    "dev": "tsx src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "harness",
+    "fme",
+    "split",
+    "feature-flags",
+    "cli"
+  ],
+  "homepage": "https://www.npmjs.com/package/@kud/harness-fme-cli",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kud/harness-fme-cli.git"
+  },
+  "author": "kud",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@kud/harness-fme": "0.1.0",
+    "commander": "15.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.6",
+    "tsup": "9.0.0",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2",
+    "vitest": "5.1.0"
+  }
+}
