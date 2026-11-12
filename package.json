@@ -25,7 +25,9 @@
     "fme",
     "split",
     "feature-flags",
-    "cli"
+    "cli",
+    "tui",
+    "ink"
   ],
   "homepage": "https://www.npmjs.com/package/@kud/harness-fme-cli",
   "repository": {
@@ -42,10 +44,16 @@
   },
   "dependencies": {
     "@kud/harness-fme": "0.1.0",
-    "commander": "15.1.0"
+    "@kud/harness-fme-ink": "0.1.0",
+    "@kud/ink-ui": "0.44.0",
+    "commander": "15.1.0",
+    "ink": "7.1.0",
+    "react": "19.2.7"
   },
   "devDependencies": {
     "@types/node": "26.6.6",
+    "@types/react": "19.2.17",
+    "ink-testing-library": "4.0.0",
     "tsup": "9.0.0",
     "tsx": "4.23.15",
     "typescript": "7.0.2",
