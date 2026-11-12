@@ -25,6 +25,8 @@ export const makeDefinition = (
 export type FakeApiOptions = {
   flags?: FeatureFlag[]
   definitions?: Record<string, FlagDefinition>
+  // Environment list and order, for hosts that care which column comes first.
+  environments?: { id: string; name: string }[]
   // The most objects one list page returns, whatever `limit` asks for.
   pageCap?: number
   // Runs on each stored definition after a PUT; lets a test simulate a server
@@ -70,7 +72,7 @@ export const makeFakeApi = (options: FakeApiOptions = {}) => {
     if (method === "GET" && path === "/workspaces")
       return page([{ id: WORKSPACE_ID, name: "Default" }], full.searchParams)
     if (method === "GET" && parts[0] === "environments")
-      return json([QA_ENV, PROD_ENV])
+      return json(options.environments ?? [QA_ENV, PROD_ENV])
 
     if (parts[0] === "splits" && parts[1] === "ws") {
       // /splits/ws/:ws

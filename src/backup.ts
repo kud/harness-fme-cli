@@ -4,8 +4,7 @@ import { type BackupInfo } from "@kud/harness-fme"
 
 const safeSegment = (value: string) => value.replace(/[^A-Za-z0-9._-]+/g, "_")
 
-export const stamp = (date: Date) =>
-  date.toISOString().replace(/[:.]/g, "-")
+export const stamp = (date: Date) => date.toISOString().replace(/[:.]/g, "-")
 
 // One directory per run, one JSON file per flag:
 //   <root>/<run stamp>/<environment>/<flag>.json

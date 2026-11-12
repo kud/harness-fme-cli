@@ -7,6 +7,7 @@ import {
   type FlagOperation,
 } from "@kud/harness-fme"
 import { runList, runStatus, runUnreleased } from "./commands/read.js"
+import { runTui } from "./commands/tui.js"
 import {
   CliError,
   defaultDeps,
@@ -121,6 +122,28 @@ Environment:
     .option("--prefix <prefix>", "only flags whose name starts with this")
     .option("--all", "include archived flags")
     .action(action(async (ctx, command) => runUnreleased(ctx, command.opts())))
+
+  program
+    .command("tui")
+    .description(
+      "interactive dashboard: browse flags, mark and change targeting",
+    )
+    .option("--tag <tag>", "only flags with this tag")
+    .option("--prefix <prefix>", "only flags whose name starts with this")
+    .option("-e, --env <env>", ENV_HELP, collect, [])
+    .option("--write", "enable writes from the TUI (read-only without it)")
+    .addHelpText(
+      "after",
+      `
+Keys:
+  up/down move, left/right or tab change the environment column,
+  space marks, enter opens a flag, r refreshes, q quits.
+  Write keys (needs --write): o on for everyone, f off,
+  a add the HARNESS_FME_KEY key, x remove it, acting on the marked
+  flags, or the selected flag, in the focused environment.
+  A production environment asks for its exact name, typed out.`,
+    )
+    .action(action(async (ctx, command) => runTui(ctx, command.opts())))
 
   const key = program
     .command("key")
