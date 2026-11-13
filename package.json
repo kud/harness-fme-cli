@@ -29,7 +29,7 @@
     "tui",
     "ink"
   ],
-  "homepage": "https://www.npmjs.com/package/@kud/harness-fme-cli",
+  "homepage": "https://kud.io/projects/harness-fme-cli",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kud/harness-fme-cli.git"
