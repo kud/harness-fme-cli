@@ -43,7 +43,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@kud/harness-fme": "0.1.0",
+    "@kud/harness-fme": "0.2.0",
     "@kud/harness-fme-ink": "0.1.0",
     "@kud/ink-ui": "0.44.1",
     "commander": "15.1.0",

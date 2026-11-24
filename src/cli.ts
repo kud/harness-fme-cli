@@ -6,6 +6,8 @@ import {
   turnOnOperation,
   type FlagOperation,
 } from "@kud/harness-fme"
+import { runCompare } from "./commands/compare.js"
+import { runHistory } from "./commands/history.js"
 import { runList, runStatus, runUnreleased } from "./commands/read.js"
 import { runTui } from "./commands/tui.js"
 import {
@@ -111,6 +113,41 @@ Environment:
     .action(
       action<[string]>(async (ctx, command, flag) =>
         runStatus(ctx, flag, command.opts()),
+      ),
+    )
+
+  program
+    .command("compare")
+    .description(
+      "one flag across environments, side by side, differences marked",
+    )
+    .argument("<flag>", "flag name")
+    .option("-e, --env <env>", ENV_HELP, collect, [])
+    .action(
+      action<[string]>(async (ctx, command, flag) =>
+        runCompare(ctx, flag, command.opts()),
+      ),
+    )
+
+  program
+    .command("history")
+    .description(
+      "published change requests for one flag in one environment, with what each changed",
+    )
+    .argument("<flag>", "flag name")
+    .requiredOption("-e, --env <env>", "environment name or id (required)")
+    .option("--limit <n>", "show at most this many changes", "20")
+    .addHelpText(
+      "after",
+      `
+The admin API has no audit log. This reads the change requests that were
+published for the flag (changes made through an approval flow) and diffs each
+against the one before. Direct edits that skipped approvals are not listed.
+Needs an admin API key with access to change requests.`,
+    )
+    .action(
+      action<[string]>(async (ctx, command, flag) =>
+        runHistory(ctx, flag, command.opts()),
       ),
     )
 
