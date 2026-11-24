@@ -8,7 +8,16 @@ describe("help", () => {
   it("lists every command", async () => {
     const { code, stdout } = await runCli(["--help"])
     expect(code).toBe(0)
-    for (const command of ["list", "status", "unreleased", "key", "on", "off"])
+    for (const command of [
+      "list",
+      "status",
+      "compare",
+      "history",
+      "unreleased",
+      "key",
+      "on",
+      "off",
+    ])
       expect(stdout).toContain(command)
     expect(stdout).toContain("HARNESS_FME_API_KEY")
   })

@@ -33,6 +33,8 @@ export type FakeApiOptions = {
   // that silently drops part of a write.
   afterWrite?: (flag: string, stored: FlagDefinition) => FlagDefinition
   failPutFor?: string[]
+  // Served by GET /changeRequests, filtered by environmentId and status.
+  changeRequests?: Record<string, unknown>[]
 }
 
 export type RecordedCall = { method: string; path: string; body?: unknown }
@@ -73,6 +75,20 @@ export const makeFakeApi = (options: FakeApiOptions = {}) => {
       return page([{ id: WORKSPACE_ID, name: "Default" }], full.searchParams)
     if (method === "GET" && parts[0] === "environments")
       return json(options.environments ?? [QA_ENV, PROD_ENV])
+    if (method === "GET" && path === "/changeRequests") {
+      const env = full.searchParams.get("environmentId")
+      const status = full.searchParams.get("status")
+      return json({
+        data: (options.changeRequests ?? []).filter(
+          (cr) =>
+            (!env ||
+              (cr.split as { environment?: { id?: string } } | undefined)
+                ?.environment?.id === env) &&
+            (!status || cr.status === status),
+        ),
+        nextMarker: null,
+      })
+    }
 
     if (parts[0] === "splits" && parts[1] === "ws") {
       // /splits/ws/:ws

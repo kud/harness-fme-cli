@@ -18,6 +18,7 @@
 ## Features
 
 - **Rollouts at a glance** — one table of flags against environments, with the rollout status and default rule for each; `unreleased` lists what is not fully on yet
+- **Compare and history** — `compare` lays one flag's environments side by side and marks what differs; `history` lists its published changes in an environment with what each one changed
 - **Interactive dashboard** — `harness-fme tui` is a full-screen view of flags and environments, read-only unless you start it with `--write`
 - **Change targeting from the shell** — add or remove an individual key on a treatment, serve `on` or `off`, ramp to a percentage, or act on a segment
 - **Plan, backup, read-back** — every write prints a plan first, saves the original definition before it lands, and checks the flag afterwards, stopping at the first failure
@@ -88,6 +89,24 @@ One flag across every environment: state, default rule, traffic, rules, keys and
 
 ```sh
 harness-fme status checkout_new_flow
+```
+
+#### `compare <flag>`
+
+One flag across environments, side by side: whether it is defined, killed, the default rule and treatment, traffic, treatments with their key counts and segments, the number of targeting rules and when it was last updated (ISO 8601, UTC). Fields that differ between environments are marked `*` and listed at the end; each environment's rules follow on one line each. `-e, --env` narrows the environments.
+
+```sh
+harness-fme compare checkout-redesign --env staging,production
+```
+
+#### `history <flag> --env <env>`
+
+A flag's changes in one environment, newest first, with the columns of the web UI's audit log (time, title, change type, approvers, edited by, status) and, under each, what it changed: the default rule before and after, then a field-level diff. `--limit <n>` caps the list (default 20).
+
+The admin API has no audit log, so this reads the flag's published change requests and diffs each against the one before. A change made without an approval flow is not recorded by the API and does not appear. It needs an admin API key with access to change requests.
+
+```sh
+harness-fme history checkout-redesign --env production
 ```
 
 #### `unreleased --env <env>`
