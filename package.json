@@ -1,6 +1,6 @@
 {
   "name": "@kud/harness-fme-cli",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "description": "Terminal client for Harness FME (Split) feature flags: list, status, targeting and rollout changes with plans, backups and read-back checks.",
   "bin": {
